@@ -1,6 +1,7 @@
 const { Schema, model } = require('mongoose')
 const studentModel = require('./student.model')
 
+// this is another file schema
 const applicantSchema =  new Schema({
     gen_id: {type: String, default: ""}, 
     pin: {type: String, default: ""}, 
