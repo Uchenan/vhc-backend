@@ -19,8 +19,9 @@ const corsOptions = {
 // relevant dependencies and database
 require('dotenv').config()
 require('./db/conn')
+// app.use(express.urlencoded({  }))
 app.use(express.json({ limit: '10mb'}))
-app.use(express.urlencoded({ limit: '10mb'}))
+app.use(express.urlencoded({ limit: '10mb', extended: true }))
 app.use(cors(corsOptions))
 
 
