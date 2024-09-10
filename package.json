@@ -1,11 +1,11 @@
 {
   "name": "vhcback",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "nodemon server.js",
-    "start": "node server.js"
+    "serve": "nodemon app.js",
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "",
