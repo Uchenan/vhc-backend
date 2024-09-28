@@ -1,5 +1,6 @@
 const express = require('express')
 const levelModel = require('../models/level.model')
+const studentModel = require('../models/student.model')
 
 
 // setting up the router 
@@ -106,13 +107,10 @@ router.put('/:code', async (req, res) => {
 //deletes a level information 
 router.delete('/:code', async (req, res) => {
     try {
-        // await levelModel.updateMany({}, { $pull: {
-        //     sub_subjects: {
-        //         code: req.params.code
-        //     }
-        // }})
         await levelModel.findOneAndDelete({code: req.params.code}).then(doc => {
-            res.json({success: true, data: null, error: null})
+            studentModel.updateMany({'academic.level': req.params.code}, {$set: {'academic.level': ""}}).then(() => {
+                res.json({success: true, data: null, error: null})
+            })
         }).catch(() => {
             throw `Unable to delete the level`
         })
