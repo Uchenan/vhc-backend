@@ -21,23 +21,23 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         // checking if the session already exists 
-        const check = await sessionModel.find({code: req.body.code})
+        const check = await sessionModel.find({name: req.body.name})
         if(check.length > 0){
             // throwing an error if the session already exist
             throw "Session exists in the database"
         }
 
         // fetching the current state of levels 
-        let result = []
-        const levels = await levelModel.find({})
-        levels.forEach(x => {
-            result.push({code: x.code, score_setting: 320})
-        })
+        // let result = []
+        // const levels = await levelModel.find({})
+        // levels.forEach(x => {
+        //     result.push({code: x.code, score_setting: 320})
+        // })
 
-        // registering the current state of levels in the session
-        req.body.terms.forEach(x => {
-            x.levels = result 
-        })
+        // // registering the current state of levels in the session
+        // req.body.terms.forEach(x => {
+        //     x.levels = result 
+        // })
 
 
         sessionModel.create(req.body).then(doc => {
