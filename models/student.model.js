@@ -33,6 +33,7 @@ const accountSchema = new Schema({
 
 const academicSchema = new Schema({
     level: {type: String, default: ""},
+    department: {type: String, default: ""}, 
     prefect: {type: String, default: ""},
 })
 

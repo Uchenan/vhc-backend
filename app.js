@@ -11,7 +11,10 @@ const authStaffRouter = require('./auth/staff')
 const authStudentRouter = require('./auth/student')
 const subjectRouter = require('./routes/subjectRoute')
 const subjectPackageRouter = require('./routes/subjectPackageRoute')
-const sessionRoute = require('./routes/sessionRoute')
+const sessionRouter = require('./routes/sessionRoute')
+const scoresheetRouter = require('./routes/scoresheetRoute')
+
+const { subjectsLister } = require('./utils/subject')
 
 const corsOptions = {
     exposedHeaders: 'vhc_token'
@@ -34,7 +37,15 @@ app.use('/api/applicant', applicantRouter)
 app.use('/api/subject', subjectRouter)
 app.use('/api/level', levelRouter)
 app.use('/api/subject-package', subjectPackageRouter)
-app.use('/api/session', sessionRoute)
+app.use('/api/session', sessionRouter)
+app.use('/api/scoresheet', scoresheetRouter)
+
+
+app.get('/api/test/:subject', async (req, res) => {
+    console.log(req.params.subject)
+    let result = await subjectsLister(req.params.subject)
+    res.json(result)
+})
 
 //authenticator routes 
 app.use('/api/auth/staff', authStaffRouter)

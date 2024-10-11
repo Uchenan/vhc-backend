@@ -1,6 +1,11 @@
 const express = require('express')
 const sessionModel = require('../models/session.model')
+const scoresheetModel = require('../models/scoresheet.model')
+const studentModel = require('../models/student.model')
 const levelModel = require('../models/level.model')
+const { subjectsLister } = require('../utils/subject')
+
+const { generateTenAlphaNumbericDigits } = require('../utils/generateRandomLibrary')
 
 
 //setting up the router 
@@ -17,6 +22,38 @@ router.get('/', async (req, res) => {
     }
 })
 
+// activate a session 
+router.post('/activate', async (req, res) => {
+    try {
+        // disabling all sessions 
+        await sessionModel.updateMany({}, {$set: {active: false}})
+
+        // setting the current session 
+        await sessionModel.findOneAndUpdate({name: req.body.name}, {$set: {active: true}}).then(() => {
+            res.json({success: true, data: null, error: null})
+        }).catch(err => {
+            throw err
+        })
+    } catch(error) {
+        res.statusCode = 400
+        res.json({success: false, data: null, error: error})
+    }
+})
+
+// deactivate a session 
+router.post('/deactivate', async (req, res) => {
+    try {
+        await sessionModel.findOneAndUpdate({name: req.body.name}, {$set: {active: false}}).then(() => {
+            res.json({success: true, data: null, error: null})
+        }).catch(err => {
+            throw err
+        })
+    } catch(error) {
+        res.statusCode = 400
+        res.json({success: false, data: null, error: error})
+    }
+})
+
 // creates a new session record in the database 
 router.post('/', async (req, res) => {
     try {
@@ -27,29 +64,42 @@ router.post('/', async (req, res) => {
             throw "Session exists in the database"
         }
 
-        // fetching the current state of levels 
-        // let result = []
-        // const levels = await levelModel.find({})
-        // levels.forEach(x => {
-        //     result.push({code: x.code, score_setting: 320})
-        // })
-
-        // // registering the current state of levels in the session
-        // req.body.terms.forEach(x => {
-        //     x.levels = result 
-        // })
+        // populating the terms automatically 
+        req.body.terms = [
+            {name: "First Term", scoresheet_code: "first_" + generateTenAlphaNumbericDigits()},
+            {name: "Second Term", scoresheet_code: "second_" + generateTenAlphaNumbericDigits()},
+            {name: "Third Term", scoresheet_code: "third_" + generateTenAlphaNumbericDigits()},
+        ]
 
 
+        // fetching all the registered students in the database
+        // and formating them for entry into the session collection
+        let result = [] 
+        let students = await studentModel.find({})
+        if(students.length > 0){
+            students.forEach(async st => {
+                result.push({   
+                    ref_id: st.account.ref_id, 
+                    level: st.academic.level, 
+                    subject_scores: []
+                })
+            })
+        }
+
+        //creating documents for the terms in the scoresheet collection
+        req.body.terms.forEach(el => {
+            scoresheetModel.create({
+                scoresheet_code: el.scoresheet_code,
+                students: result
+            })
+        })
+
+        // creating the session document 
         sessionModel.create(req.body).then(doc => {
             res.json({success: true, data: doc, error: null})
         }).catch(err => {
             throw err
         })
-
-
-
-        
-
     } catch(error){
         res.statusCode = 400
         res.json({success: false, data: null, error: error})

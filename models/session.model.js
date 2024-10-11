@@ -1,27 +1,38 @@
 const { Schema, model } = require('mongoose')
 
+
+
+
 // e.g. name_of_assessment: Exam , mark_obtainable: 60
 const scoreSchema = new Schema({
     name_of_assessment: {type: String, default: ""}, 
     mark_obtainable: {type: Number, default: 0}
 })
 
-//e.g. code: jss1, 
-// score_setting: [
-// {name_of_assessment: C.A. , mark_obtainable: 40},
-// {name_of_assessment: Exam , mark_obtainable: 60}]
-// total_score: 100
-const levelSchema = new Schema({
-    code: {type: String, default: ""}, 
-    score_setting: [scoreSchema], 
-    total_score: {type: Number, default: 100}
+
+// e.g. 
+const gradeSchema = new Schema({
+    from: {type: Number}, 
+    to: {type: Number}, 
+    grade: {type: String}, 
+    remark: {type: String}
 })
 
-const termsSchema = new Schema({
+const markAllocationSchema = new Schema({
+    levels_included: [String], 
+    score_type: [scoreSchema]
+})
+
+const gradeAllocationSchema = new Schema({
+    levels_included: [String], 
+    grade_name: {type: String, default: ""},
+    grade_type: [gradeSchema]
+})
+
+const termSchema = new Schema({
     name: {type: String, default: ""}, 
-    code: {type: String, default: ""},
-    locked: {type: Boolean, default: false},
-    levels: [levelSchema]
+    scoresheet_code: {type: String, default: ""},
+    locked: {type: Boolean, default: true}
 })
 
 const sessionSchema = new Schema({
@@ -29,8 +40,10 @@ const sessionSchema = new Schema({
     active: {type: Boolean, default: false}, 
     from_year: {type: Number, default: ""},
     to_year: {type: Number, default: ""}, 
+    mark_allocation_type: [markAllocationSchema], 
+    grade_type: [gradeAllocationSchema], 
     locked: {type: Boolean, default: false},
-    terms: [termsSchema]
+    terms: [termSchema]
 }, {strict: true})
 
 const sessionModel = model('Session', sessionSchema)

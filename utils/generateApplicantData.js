@@ -19,4 +19,5 @@ function generateApplicantPIN() {
     return result 
 }
 
+
 module.exports = { generateApplicantID, generateApplicantPIN }
