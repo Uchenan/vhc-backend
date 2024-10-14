@@ -4,8 +4,8 @@ let DB_USER = process.env.DB_USER
 let DB_PASSWORD = process.env.DB_PASSWORD 
 let DB_NAME = process.env.DB_NAME 
 
-// let uri = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.zfxbe.mongodb.net/${DB_NAME}?retryWrites=true&w=majority&appName=Cluster0`
-let uri = "mongodb://localhost:27017/vhc"
+let uri = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@cluster0.zfxbe.mongodb.net/${DB_NAME}?retryWrites=true&w=majority&appName=Cluster0`
+// let uri = "mongodb://localhost:27017/vhc"
 
 const connectToDB = async () => {
     try {
