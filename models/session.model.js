@@ -32,7 +32,8 @@ const gradeAllocationSchema = new Schema({
 const termSchema = new Schema({
     name: {type: String, default: ""}, 
     scoresheet_code: {type: String, default: ""},
-    locked: {type: Boolean, default: true}
+    locked: {type: Boolean, default: true},
+    active: {type: Boolean, default: false}
 })
 
 const sessionSchema = new Schema({

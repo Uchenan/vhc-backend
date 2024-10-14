@@ -22,6 +22,71 @@ router.get('/', async (req, res) => {
     }
 })
 
+// lock or unlock a term 
+// req structure 
+// {name: "2023/2024 Academic Session", term: "First Term", locked: true}
+router.put('/term-guard', async (req, res) => {
+    try {
+        let session = await sessionModel.find({name: req.body.name})
+
+        if(session.length <= 0){
+            throw "Session is not available"
+        }
+
+        // setting only the single term active and diabling others 
+        session[0].terms.forEach(term => {
+            if(term.name === req.body.term){
+                term.locked = req.body.locked
+            }
+        })
+
+        // setting the current session 
+        await sessionModel.findOneAndUpdate({name: req.body.name}, session[0]).then(() => {
+            res.json({success: true, data: null, error: null})
+        }).catch(err => {
+            throw err
+        })
+    } catch(error){
+        res.statusCode = 400
+        res.json({success: false, data: null, error: error})
+    }
+})
+
+// activate a term 
+// request structure 
+// {name: "2023/2024 Academic Session", term: "name of term"}
+router.post('/term-activate', async (req, res) => {
+    try {
+        let session = await sessionModel.find({name: req.body.name})
+
+        if(session.length <= 0){
+            throw "Session is not available"
+        }
+
+        // setting only the single term active and diabling others 
+        session[0].terms.forEach(term => {
+            if(term.name === req.body.term){
+                term.active = true 
+            } else { 
+                term.active = false 
+            }
+        })
+
+        // setting the current session 
+        await sessionModel.findOneAndUpdate({name: req.body.name}, session[0]).then(() => {
+            res.json({success: true, data: null, error: null})
+        }).catch(err => {
+            throw err
+        })
+    } catch(error) {
+        res.statusCode = 400
+        res.json({success: false, data: null, error: error})
+    }
+})
+
+// deactivate a term 
+
+
 // activate a session 
 router.post('/activate', async (req, res) => {
     try {
